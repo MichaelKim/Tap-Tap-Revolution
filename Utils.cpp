@@ -1,6 +1,7 @@
 #include <fstream>
 #include <vector>
 #include <windows.h>
+#include <dirent.h>
 
 #include "Utils.h"
 
@@ -57,73 +58,33 @@ void printCenter(int color, int width, std::string text){
 	printColor(color, (width-len)/2, SBInfo.dwCursorPosition.Y, text+"\n");
 }
 
-std::string ExePath() {
+std::string currentDir(){
     char buffer[MAX_PATH];
-    GetModuleFileName( NULL, buffer, MAX_PATH );
-    std::string::size_type pos = std::string( buffer ).find_last_of( "\\/" );
-    return std::string( buffer ).substr( 0, pos);
+    GetModuleFileName(NULL, buffer, MAX_PATH);
+    std::string::size_type pos = std::string(buffer).find_last_of("\\");
+    return std::string(buffer).substr(0, pos);
 }
 
 std::string getMusicFile(std::string fullPath){
-    std::string music = fullPath;
-    music.erase(0,ExePath().length()+1);
-    music.erase(music.end()-3,music.end());
-    music.append("mp3");
+    std::string music = fullPath.substr(0, fullPath.rfind('.')) + ".mp3";
     return music;
 }
 
-bool fileExists(const char *filename){
-    std::ifstream ifile(filename);
-    return ifile;
-}
-
-int SearchDirectory(std::vector<std::string>& refvecFiles,
-									const std::string & fefcstrRootDirectory,
-									const std::string & refcstrExtension,
-									bool bSearchSubdirectories){
-    std::string	 strFilePath;			 // Filepath
-    std::string	 strPattern;			  // Pattern
-    std::string	 strExtension;			// Extension
-    HANDLE		  hFile;				   // Handle to file
-    WIN32_FIND_DATA FileInformation;		 // File information
-
-    strPattern = fefcstrRootDirectory + "\\*.*";
-
-    hFile = ::FindFirstFile(strPattern.c_str(), &FileInformation);
-    if(hFile != INVALID_HANDLE_VALUE){
-	    do{
-	        if(FileInformation.cFileName[0] != '.'){
-                strFilePath.erase();
-		        strFilePath = fefcstrRootDirectory + "\\" + FileInformation.cFileName;
-
-          		if(FileInformation.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY){
-                    //True if you want to search subdirectories
-		            if(bSearchSubdirectories){
-					    // Search subdirectory
-					    int iRC = SearchDirectory(refvecFiles,
-											    strFilePath,
-											    refcstrExtension,
-											    bSearchSubdirectories);
-					    if(iRC)	return iRC;
-                    }
-		        }
-		        else{
-                    // Check extension
-		            strExtension = FileInformation.cFileName;
-		            strExtension = strExtension.substr(strExtension.rfind(".") + 1);
-		            if(strExtension == refcstrExtension){
- 	                    // Save filename
- 	                    if(fileExists((getMusicFile(strFilePath)).c_str()))
-                            refvecFiles.push_back(strFilePath);
-		            }
-		        }
-            }
-	    }while(::FindNextFile(hFile, &FileInformation) == TRUE);
-	    // Close handle
-	    ::FindClose(hFile);
-	    DWORD dwError = ::GetLastError();
-	    if(dwError != ERROR_NO_MORE_FILES)
-        return dwError;
+std::vector<std::string> searchDir(std::string rootDir, std::string extension){
+    std::vector<std::string> files;
+    DIR *dir;
+    struct dirent *ent;
+    if((dir = opendir(rootDir.c_str())) != NULL){
+        /* print all the files and directories within directory */
+        while((ent = readdir(dir)) != NULL) {
+            std::string fileName = ent->d_name;
+            std::string extName = fileName.substr(fileName.rfind('.') + 1);
+            if(extName == extension) files.push_back(ent->d_name);
+        }
+        closedir(dir);
     }
-    return 0;
+    else{
+        perror("Could not search for songs");
+    }
+    return files;
 }

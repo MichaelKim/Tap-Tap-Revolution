@@ -1,3 +1,6 @@
+#ifndef UTILS_H
+#define UTILS_H
+
 #include <iostream>
 #include <vector>
 
@@ -8,11 +11,9 @@ void setColor(int color);
 void printColor(int color, int x, int y, std::string text);
 void printCenter(int color, int x, std::string text);
 
-std::string ExePath();
+std::string currentDir();
 std::string getMusicFile(std::string fullPath);
 
-bool fileExists(const char *filename);
-int SearchDirectory(std::vector<std::string>& refvecFiles,
-									const std::string & fefcstrRootDirectory,
-									const std::string & refcstrExtension,
-									bool bSearchSubdirectories);
+std::vector<std::string> searchDir(std::string rootDir, std::string extension);
+
+#endif // UTILS_H

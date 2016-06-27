@@ -18,6 +18,7 @@ void intro(){
         printColor(0x1f, 19-i, 4, "~");
 		Sleep(500);
 	}
+
 	system("cls");
     setWindowSize(80, 6);
 	system("Color fc");
@@ -34,80 +35,85 @@ void intro(){
 	}
 }
 
-void mainmenu(){
+void displayMenu(){
     system("cls");
     system("Color 1c");
     setWindowSize(45, 10);
-    cout << " ___       ___        __                     \n";
-    cout << "  | _  _    | _  _   |__)_   _ |   |_. _  _  \n";
+    cout << " ___       ___        __                       \n";
+    cout << "  | _  _    | _  _   |__)_   _ |   |_. _  _    \n";
     cout << "  |(_||_)   |(_||_)  | \\(-\\/(_)||_||_|(_)| ) \n";
-    cout << "      |         |                            \n";
+    cout << "      |         |                              \n";
     printCenter(0x1b, 45, "Main Menu");
     printCenter(0x1d, 45, "1. Choose a song");
     printCenter(0x1d, 45, "2. Credits");
-    printCenter(0x1d, 45, "3. Exit");
+    printCenter(0x1d, 45, "0. Exit");
 }
 
+void songsMenu(){
+    system("Color 2f");
+    printCenter(0x2f, 45, "List of Songs");
+
+    vector<string> files = searchDir(currentDir(), "txt");
+    for(int i=0;i<files.size();i++){
+        ifstream musicData(files.at(i));
+        if(musicData.good()){
+            string songName;
+            getline(musicData, songName);
+
+            string musicList = "Song " + to_string(i+1) + ": " + songName;
+            printCenter(0x2e, 45, musicList);
+        }
+        musicData.close();
+    }
+    printCenter(0x2f, 45, "0: Back");
+
+    int songChoice = 0;
+    char menu;
+    printColor(0x2f, 3, songChoice+1, "->");
+    do{
+        menu = getch();
+
+        printColor(0x2f, 3, songChoice+1, "  ");
+        if(menu == 's'){
+            if(songChoice < files.size()) songChoice++;
+            else songChoice = 0;
+        }
+        else if(menu == 'w'){
+            if(songChoice > 0) songChoice--;
+            else songChoice = files.size();
+        }
+        printColor(0x2f, 3, songChoice+1, "->");
+    } while(menu != '\r' && menu != '0' && menu - '1' >= files.size());
+
+    if(menu >= '0' && menu <= '9'){
+        songChoice = menu - '1';
+    }
+
+    if(songChoice >= 0 && songChoice < files.size()){
+        Game game;
+        game.parse(files.at(songChoice));
+        game.play();
+    }
+}
 int main(){
-    intro();
-    mainmenu();
-    char menu = getch();
-	while(menu != '3'){
+    //intro();
+
+    char menu;
+    do{
+        displayMenu();
+        menu = getch();
+        system("cls");
+
         if(menu == '1'){
-            system("cls");
-            system("Color 2f");
-            printCenter(0x2f, 45, "List of Songs");
-
-            vector<string> files;
-            SearchDirectory(files,ExePath(),"txt",false);
-            for(int i=0;i<files.size();i++){
-            	ifstream musicData(files.at(i).c_str());
-            	if(musicData){
-                    string songName;
-                    getline(musicData,songName);
-                    musicData.close();
-                    stringstream line;
-                    line << "Song " << i+1 << ": " << songName;
-                    printCenter(0x2e, 45, line.str());
-            	}
-            	musicData.close();
-            }
-            printCenter(0x2f, 45, "0: Back");
-
-            int songChoice = 0;
-            printColor(0x2f, 3, songChoice+1, "->");
-            char choice = getch();
-            while(choice != '\r'){
-                printColor(0x2f, 3, songChoice+1, "  ");
-                if(choice == 's'){
-                    if(songChoice < files.size()) songChoice++;
-                    else songChoice = 0;
-                }
-                else if(choice == 'w'){
-                    if(songChoice > 0) songChoice--;
-                    else songChoice = files.size();
-                }
-                else if(choice >= '0' && choice <= '9'){
-                    if(choice == '0') songChoice = files.size();
-                    else songChoice = choice - '1';
-                    break;
-                }
-                printColor(0x2f, 3, songChoice+1, "->");
-                choice = getch();
-            }
-            if(songChoice != files.size()) game(files.at(songChoice));
+            songsMenu();
         }
         else if(menu == '2'){
-             system("cls");
              system("Color 3a");
              cout << endl;
              printCenter(0x3d, 45, "By [LenKagamine]");
              printCenter(0x3a, 45, "For TEJ Summative");
              getch();
         }
-
-        mainmenu();
-        menu = getch();
-    }
+    } while(menu != '0');
     return 0;
 }
