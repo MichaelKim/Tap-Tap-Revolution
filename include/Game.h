@@ -1,7 +1,10 @@
 #ifndef GAME_H
 #define GAME_H
 
-class Game{
+#include <vector>
+
+class Game
+{
     public:
         Game();
         ~Game();

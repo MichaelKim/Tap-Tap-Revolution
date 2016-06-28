@@ -1,7 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include <iostream>
 #include <vector>
 
 void getWindowSize(int& width, int& height);
@@ -11,6 +10,9 @@ void setColor(int color);
 void printColor(int color, int x, int y, std::string text);
 void printCenter(int color, int x, std::string text);
 
+void printError(std::string text);
+
+std::vector<std::string> getSongList();
 std::string currentDir();
 std::string getMusicFile(std::string fullPath);
 
