@@ -192,7 +192,7 @@ void Game::play()
         }
 
         setCursor(13,27);
-        printCenter(0x1e, 28, "Score: " + to_string(score));
+        printCenter(0x1e, 28, "Score: " + to_string(score) + "  "); //To clear last digit when score is 100 -> 99
         for(int i=0; i<5; i++)
         {
             int color = 0x07;

@@ -10,7 +10,8 @@ using namespace std;
 
 void intro()
 {
-    SetConsoleOutputCP(65001);
+    SetConsoleTitle("Tap Tap Revolution");
+    //SetConsoleOutputCP(65001);
     setWindowSize(20, 10);
     system("Color 1f");
     printColor(0x1f, 0, 4, "     Welcome to     \n");
