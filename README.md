@@ -1,8 +1,8 @@
 # Tap-Tap-Revolution
 
-A C++ rhythm game using the console window for my Grade 10 TEJ course.
+A C++ rhythm game using only the console window for graphics.
 
-This was my summative project for the Grade 10 Computer Engineering (TEJ3M) course. This was originally coded to be played using a simple controller I built connected via the parallel port. I later ported it to be playable with the keyboard.
+This was my summative project for the Grade 11 Computer Engineering (TEJ3M) course. This was originally coded to be played using a simple controller I built connected via the parallel port. I later ported it to be playable with the keyboard.
 
 To compile: Tap Tap Revolution makes a lot of Windows API calls to manipulate the console size, change colour, etc. It plays music using the MCI command `mciSendString()`, which requires `-lwinmm`.
 
