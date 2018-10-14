@@ -28,7 +28,7 @@ Game::~Game()
 void Game::parse(string dataPath)
 {
     music = getMusicFile(dataPath);
-    \
+
     ifstream musicData(dataPath);
     if(!musicData.good())
     {
